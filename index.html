@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTRL — Gesture Control</title>
+    <meta name="description" content="Control your desktop with hand gestures. Intuitive, customizable, effortless.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ═══════════ ANIMATED BACKGROUND ═══════════ -->
+    <div class="bg-wrapper">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <div class="bg-orb orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
+
+    <!-- ═══════════ TOAST CONTAINER ═══════════ -->
+    <div id="toast-container"></div>
+
+    <!-- ═══════════ SIDEBAR ═══════════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-hand-sparkles"></i></div>
+                <div class="logo-text">
+                    <span class="logo-name">CT<span class="accent">RL</span></span>
+                    <span class="logo-sub">Gesture Control</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item active" data-section="dashboard" onclick="switchSection('dashboard', this)">
+                <i class="fa-solid fa-grid-2"></i>
+                <span>Dashboard</span>
+            </a>
+            <a class="nav-item" data-section="mapping" onclick="switchSection('mapping', this)">
+                <i class="fa-solid fa-link"></i>
+                <span>Mapping</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="system-status" id="system-status">
+                <div class="status-dot offline" id="status-dot"></div>
+                <div class="status-info">
+                    <span class="status-label">Recognition</span>
+                    <span class="status-value" id="status-value">Off</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ═══════════ MAIN CONTENT ═══════════ -->
+    <main class="main-content" id="main-content">
+
+        <!-- ── TOP BAR ── -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="page-title">
+                    <h1 id="page-title-text">Dashboard</h1>
+                    <p id="page-subtitle">Your gesture control at a glance</p>
+                </div>
+            </div>
+            <div class="top-bar-center">
+                <div class="recognition-toggle">
+                    <span class="toggle-label">Recognition</span>
+                    <label class="switch">
+                        <input type="checkbox" id="recognition-toggle" onchange="toggleRecognition(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="top-bar-right">
+            </div>
+        </header>
+
+        <!-- ═══ SECTION: DASHBOARD ═══ -->
+        <section class="content-section active" id="section-dashboard">
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon purple"><i class="fa-solid fa-hand"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-gestures-val">0</span>
+                        <span class="stat-label">Available Gestures</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fa-solid fa-link"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-mappings-val">0</span>
+                        <span class="stat-label">Active Mappings</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-actions-val">0</span>
+                        <span class="stat-label">Actions Available</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-status-val">Off</span>
+                        <span class="stat-label">Status</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard grid -->
+            <div class="dashboard-grid">
+                <!-- Active Mappings -->
+                <div class="glass-card mappings-overview">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-diagram-project"></i> Active Mappings</h2>
+                        <button class="btn-sm"
+                            onclick="switchSection('mapping', document.querySelector('[data-section=mapping]'))">
+                            <i class="fa-solid fa-plus"></i> New Mapping
+                        </button>
+                    </div>
+                    <div class="mappings-table-wrapper">
+                        <table class="mappings-table" id="dashboard-mappings-table">
+                            <thead>
+                                <tr>
+                                    <th>Gesture</th>
+                                    <th></th>
+                                    <th>Action</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-mappings-body"></tbody>
+                        </table>
+                        <div class="empty-state" id="mappings-empty">
+                            <i class="fa-solid fa-link-slash"></i>
+                            <p>No mappings yet</p>
+                            <span>Go to <strong>Mapping</strong> to link gestures to actions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How it works -->
+                <div class="glass-card quick-start">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-rocket"></i> How It Works</h2>
+                    </div>
+                    <div class="steps-list">
+                        <div class="step-item" id="step-1">
+                            <div class="step-num">1</div>
+                            <div class="step-content">
+                                <h4>Map Gestures</h4>
+                                <p>Link hand gestures to desktop actions</p>
+                            </div>
+                            <i class="fa-solid fa-check step-check"></i>
+                        </div>
+                        <div class="step-item" id="step-2">
+                            <div class="step-num">2</div>
+                            <div class="step-content">
+                                <h4>Go Live</h4>
+                                <p>Toggle recognition to start controlling</p>
+                            </div>
+                            <i class="fa-solid fa-check step-check"></i>
+                        </div>
+                        <div class="step-item" id="step-3">
+                            <div class="step-num">3</div>
+                            <div class="step-content">
+                                <h4>Use the Gesture </h4>
+                                <p>Show your hand to the camera — that's it!</p>
+                            </div>
+                            <i class="fa-solid fa-check step-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="glass-card activity-feed">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-timeline"></i> Recent Activity</h2>
+                    <button class="btn-sm ghost" onclick="clearActivity()">Clear</button>
+                </div>
+                <div class="activity-list" id="activity-list">
+                    <div class="empty-state" id="activity-empty">
+                        <i class="fa-solid fa-clock"></i>
+                        <p>No recent activity</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ SECTION: MAPPING ═══ -->
+        <section class="content-section" id="section-mapping">
+            <div class="mapping-layout">
+                <!-- Left: Gestures -->
+                <div class="mapping-column">
+                    <div class="column-header">
+                        <h2><i class="fa-solid fa-hand-sparkles"></i> Gestures</h2>
+                        <span class="badge" id="available-gestures-count">0</span>
+                    </div>
+                    <div class="column-list" id="mapping-gesture-list"></div>
+                    <div class="column-footer">
+                        <button class="btn-add-gesture" onclick="openAddGestureModal()">
+                            <i class="fa-solid fa-plus"></i> Add Custom Gesture
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Center: Link -->
+                <div class="mapping-center">
+                    <div class="link-indicator">
+                        <div class="selected-pair">
+                            <span class="pair-label" id="selected-gesture-label">Pick a gesture</span>
+                            <div class="link-arrow"><i class="fa-solid fa-arrow-right-long"></i></div>
+                            <span class="pair-label" id="selected-action-label">Pick an action</span>
+                        </div>
+                        <button class="link-btn" id="link-btn" disabled onclick="createMapping()">
+                            <i class="fa-solid fa-link"></i>
+                            <span id="link-btn-text">Select a Pair</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Actions -->
+                <div class="mapping-column">
+                    <div class="column-header">
+                        <h2><i class="fa-solid fa-bolt"></i> Desktop Actions</h2>
+                        <span class="badge" id="available-actions-count">0</span>
+                    </div>
+                    <div class="column-list" id="mapping-action-list"></div>
+                </div>
+            </div>
+
+            <!-- Current Mappings -->
+            <div class="glass-card" style="margin-top: 30px;">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-diagram-project"></i> Your Mappings</h2>
+                </div>
+                <div class="active-chips" id="mapping-chips"></div>
+                <div class="empty-state" id="mapping-chips-empty">
+                    <i class="fa-solid fa-link-slash"></i>
+                    <p>No mappings created yet</p>
+                    <span>Select a gesture and an action above, then click <strong>Link</strong></span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ═══════════ MODALS ═══════════ -->
+
+    <!-- Add Custom Gesture Modal -->
+    <div class="modal-overlay" id="modal-add-gesture">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-hand-sparkles"></i> Add Custom Gesture</h2>
+                <button class="modal-close" onclick="closeModal('modal-add-gesture')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="gesture-name-input">Gesture Name</label>
+                    <input type="text" id="gesture-name-input" placeholder="e.g. Wave, Pinch, Spread..." maxlength="25">
+                    <span class="form-hint">Give it a name you'll remember</span>
+                </div>
+                <div class="form-group">
+                    <label>Choose an Icon <span class="form-hint-inline">(optional)</span></label>
+                    <div class="icon-picker" id="icon-picker">
+                        <div class="icon-option selected" data-icon="none" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-circle" style="font-size:0.5rem"></i></div>
+                        <div class="icon-option" data-icon="fa-hand" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-hand"></i></div>
+                        <div class="icon-option" data-icon="fa-hand-fist" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-hand-fist"></i></div>
+                        <div class="icon-option" data-icon="fa-thumbs-up" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-thumbs-up"></i></div>
+                        <div class="icon-option" data-icon="fa-hand-peace" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-hand-peace"></i></div>
+                        <div class="icon-option" data-icon="fa-hand-point-up" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-hand-point-up"></i></div>
+                        <div class="icon-option" data-icon="fa-hand-pointer" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-hand-pointer"></i></div>
+                        <div class="icon-option" data-icon="fa-hand-scissors" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-hand-scissors"></i></div>
+                        <div class="icon-option" data-icon="fa-hand-spock" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-hand-spock"></i></div>
+                        <div class="icon-option" data-icon="fa-fingerprint" onclick="selectIcon(this)"><i
+                                class="fa-solid fa-fingerprint"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-add-gesture')">Cancel</button>
+                <button class="btn-primary" id="save-gesture-btn" onclick="saveNewGesture()" disabled>
+                    <i class="fa-solid fa-check"></i> Add Gesture
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="modal-confirm-delete">
+        <div class="modal modal-sm">
+            <div class="modal-header danger">
+                <h2><i class="fa-solid fa-triangle-exclamation"></i> Remove Mapping</h2>
+                <button class="modal-close" onclick="closeModal('modal-confirm-delete')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-text">Remove the mapping for <strong id="delete-mapping-name"></strong>?</p>
+                <p class="confirm-warning"><i class="fa-solid fa-circle-info"></i> The gesture and action will become
+                    available for re-mapping.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-confirm-delete')">Cancel</button>
+                <button class="btn-danger" id="confirm-delete-btn" onclick="confirmDeleteMapping()">
+                    <i class="fa-solid fa-trash"></i> Remove
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recording Camera Modal -->
+    <div class="modal-overlay" id="modal-recording">
+        <div class="modal modal-recording">
+            <div class="modal-header recording-header">
+                <h2><i class="fa-solid fa-video"></i> Recording Gesture: <span id="recording-gesture-name"></span></h2>
+                <button class="modal-close" onclick="cancelRecording()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body recording-body">
+                <div class="camera-feed-wrapper">
+                    <img id="recording-camera-feed" src="" alt="Camera Feed" class="camera-feed">
+                    <div class="camera-feed-overlay" id="camera-feed-overlay">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <span>Starting camera...</span>
+                    </div>
+                </div>
+                <div class="recording-progress-section">
+                    <div class="recording-status" id="recording-status-text">Initializing...</div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" id="recording-progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="recording-count" id="recording-count">0 / 400 samples</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-danger" id="cancel-recording-btn" onclick="cancelRecording()">
+                    <i class="fa-solid fa-stop"></i> Cancel Recording
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
